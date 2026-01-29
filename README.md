@@ -3,8 +3,6 @@
 A complete end‑to‑end academic robotics project: **model a 3‑DoF revolute robot (Revolute1..3) in Simscape Multibody**, compute **inverse kinematics** to convert a Cartesian setpoint \((P_x,P_y,P_z)\) into joint targets \((\theta_{1d},\theta_{2d},\theta_{3d})\), and **track the motion with 3 independent joint PID loops**.  
 On top of that, the repository includes a **Differential Evolution (DE)** script to **optimize the 9 PID gains** \([K_p,K_i,K_d] \times 3\) using a simulation‑based cost (e.g., **ITAE**).
 
-> If you’re publishing this on GitHub: this README is intentionally detailed so a reviewer can **clone → run → understand → reproduce** the results.
-
 ---
 
 ## Table of contents

@@ -1,7 +1,9 @@
 # 3‑DOF Robot Manipulator Control (MATLAB/Simulink + PID + Differential Evolution)
 
-A complete end‑to‑end academic robotics project: **model a 3‑DoF revolute robot (Revolute1..3) in Simscape Multibody**, compute **inverse kinematics** to convert a Cartesian setpoint \((P_x,P_y,P_z)\) into joint targets \((\theta_{1d},\theta_{2d},\theta_{3d})\), and **track the motion with 3 independent joint PID loops**.  
-On top of that, the repository includes a **Differential Evolution (DE)** script to **optimize the 9 PID gains** \([K_p,K_i,K_d] \times 3\) using a simulation‑based cost (e.g., **ITAE**).
+A complete end‑to‑end academic robotics project: **model a 3‑DoF revolute robot (Revolute1..3) in Simscape Multibody**, compute **inverse kinematics** to convert a Cartesian setpoint $(P_x,P_y,P_z)$ into joint targets $(\theta_{1d},\theta_{2d},\theta_{3d})$, and **track the motion with 3 independent joint PID loops**.  
+On top of that, the repository includes a **Differential Evolution (DE)** script to **optimize the 9 PID gains** $[K_p,K_i,K_d] \times 3$ using a simulation‑based cost (e.g., **ITAE**).
+
+> If you’re publishing this on GitHub: this README is intentionally detailed so a reviewer can **clone → run → understand → reproduce** the results.
 
 ---
 
@@ -35,8 +37,8 @@ On top of that, the repository includes a **Differential Evolution (DE)** script
 ## Project at a glance
 
 **Main workflow**
-1. Define a Cartesian target (or trajectory) \(p_d(t) = [x_d(t)\;y_d(t)\;z_d(t)]^\top\)
-2. **Inverse Kinematics (IK / MGI)**: compute \(\theta_d(t)\)
+1. Define a Cartesian target (or trajectory) $p_d(t) = [x_d(t)\;y_d(t)\;z_d(t)]^\top$
+2. **Inverse Kinematics (IK / MGI)**: compute $\theta_d(t)$
 3. **PID per joint**: compute control input for each revolute joint
 4. **Simscape Multibody robot**: simulate the 3D motion and measure joint positions
 5. Optionally run **DE** to auto‑tune PID gains against a chosen performance metric
@@ -52,8 +54,8 @@ On top of that, the repository includes a **Differential Evolution (DE)** script
 ## Key features
 
 - **3 revolute joints** (Revolute1..3) simulated in **Simscape Multibody**
-- **Inverse kinematics** block converting \((P_x,P_y,P_z)\) → \((\theta_{1d},\theta_{2d},\theta_{3d})\)
-- **3× PID(s)** blocks for joint tracking with feedback \((\theta_1,\theta_2,\theta_3)\)
+- **Inverse kinematics** block converting $(P_x,P_y,P_z)$ → $(\theta_{1d},\theta_{2d},\theta_{3d})$
+- **3× PID(s)** blocks for joint tracking with feedback $(\theta_1,\theta_2,\theta_3)$
 - **Differential Evolution** optimizer to tune **9 PID parameters** automatically
 - Included **report and slides** (PDF/PPT) for the full academic write‑up
 - Included **CAD assets** (SolidWorks assembly + exported STEP parts)
@@ -144,9 +146,9 @@ At a high level, the model is a cascade of 3 subsystems:
 This block converts a Cartesian target into desired joint angles.
 
 ### 2) 3 independent PID loops (joint space)
-For each joint \(i \in \{1,2,3\}\):
-- Error: \(e_i(t) = \theta_{id}(t) - \theta_i(t)\)
-- Control: \(u_i(t) = K_{pi}e_i(t) + K_{ii}\int e_i(t)\,dt + K_{di}\frac{de_i(t)}{dt}\)
+For each joint $i \in \{1,2,3\}$:
+- Error: $e_i(t) = \theta_{id}(t) - \theta_i(t)$
+- Control: $u_i(t) = K_{pi}e_i(t) + K_{ii}\int e_i(t)\,dt + K_{di}\frac{de_i(t)}{dt}$
 
 ### 3) Simscape Multibody robot subsystem
 - Contains the rigid bodies + joints (**Revolute1..3**)
@@ -169,7 +171,7 @@ M = matric_homogene(X);
 ```
 
 Internally it matches the classic DH transform:
-\[
+$$
 {}^{i-1}\!T_i =
 \begin{bmatrix}
 \cos\theta & -\sin\theta \cos\alpha & \sin\theta \sin\alpha & a\cos\theta \\
@@ -177,7 +179,7 @@ Internally it matches the classic DH transform:
 0 & \sin\alpha & \cos\alpha & d \\
 0 & 0 & 0 & 1
 \end{bmatrix}
-\]
+$$
 
 ### Inverse kinematics
 
@@ -190,20 +192,20 @@ Example IK identity used (from the live script):
 theta1_sol_geo = atan2(Py, Px);
 ```
 
-> The Simulink model uses an IK “MGI / méthode graphique” subsystem to compute \(\theta_d\) from \((P_x,P_y,P_z)\).
+> The Simulink model uses an IK “MGI / méthode graphique” subsystem to compute $\theta_d$ from $(P_x,P_y,P_z)$.
 
 ### Trajectory generation (5th-order polynomial)
 
 The live script also uses a smooth 5th‑order time scaling:
-\[
+$$
 s(t) = 10\left(\frac{t}{T}\right)^3 - 15\left(\frac{t}{T}\right)^4 + 6\left(\frac{t}{T}\right)^5,
 \quad s(0)=0,\; s(T)=1
-\]
+$$
 
 This lets you interpolate between an initial and final joint target smoothly:
-\[
+$$
 \theta(t) = \theta_0 + s(t)\big(\theta_f - \theta_0\big)
-\]
+$$
 
 In the script, the progression term appears as:
 ```matlab
@@ -230,9 +232,9 @@ For comparing PID tunings (and for DE optimization), common metrics include:
 - penalties for joint limit violation / saturation
 
 A popular choice for smooth tuning is **ITAE**:
-\[
+$$
 J = \int_0^T t\;|e(t)|\;dt
-\]
+$$
 
 ---
 
@@ -242,14 +244,14 @@ J = \int_0^T t\;|e(t)|\;dt
 
 `Optimisation_DE.m` optimizes **9 variables**:
 
-\[
+$$
 [K_{p1},K_{i1},K_{d1},\;K_{p2},K_{i2},K_{d2},\;K_{p3},K_{i3},K_{d3}]
-\]
+$$
 
 with box constraints (editable in the script), e.g.:
-- \(K_p \in [0,100]\)
-- \(K_i \in [0,50]\)
-- \(K_d \in [0,10]\)
+- $K_p \in [0,100]$
+- $K_i \in [0,50]$
+- $K_d \in [0,10]$
 
 ### How to run the DE script
 

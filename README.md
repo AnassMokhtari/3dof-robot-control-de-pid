@@ -67,11 +67,10 @@ Projet_Robotique_DE/
 ├─ x3DoFRobot.slx                 # Main Simulink model (IK + joint PID + Simscape robot)
 ├─ x3DoFRobot2.slx                # Alternative/extended model variant (more blocks & signals)
 ├─ x3DoFRobotdynamique.slx        # Variant including additional dynamics/control chain
-├─ x3DoFRobot_DataFile2.m         # Simscape Multibody data file (generated from CAD import)
+├─ x3DoFRobot_DataFile.m          # Simscape Multibody data file (generated from CAD import)
 │
-├─ Script22.mlx                   # Live Script: kinematics + trajectories + dynamics derivations
+├─ Script.mlx                     # Live Script: kinematics + trajectories + dynamics derivations
 ├─ matric_homogene.m              # Helper: homogeneous transform from DH parameters
-├─ Optimisation_DE.m              # Differential Evolution (DE) script to tune PID gains
 │
 ├─ Images/                        # Figures used in the report/README
 │  ├─ Model.png

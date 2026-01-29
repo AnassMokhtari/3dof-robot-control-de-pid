@@ -71,6 +71,7 @@ Projet_Robotique_DE/
 │
 ├─ Script.mlx                     # Live Script: kinematics + trajectories + dynamics derivations
 ├─ matric_homogene.m              # Helper: homogeneous transform from DH parameters
+├─ Optimisation_DE.m              # Differential Evolution (DE) script to tune PID gains
 │
 ├─ Images/                        # Figures used in the report/README
 │  ├─ Model.png

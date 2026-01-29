@@ -25,9 +25,7 @@ On top of that, the repository includes a **Differential Evolution (DE)** script
   - [How to run the DE script](#how-to-run-the-de-script)
   - [Tips for stable optimization runs](#tips-for-stable-optimization-runs)
 - [CAD and 3D assets](#cad-and-3d-assets)
-- [Troubleshooting](#troubleshooting)
 - [Roadmap / ideas](#roadmap--ideas)
-- [License](#license)
 - [Acknowledgments](#acknowledgments)
 
 ---
@@ -95,8 +93,6 @@ Projet_Robotique_DE/
 └─ PPT/                           # Presentation slides
 ```
 
-> Tip: For a clean public GitHub repo, you usually **do not commit** `slprj/` and `*.slxc` caches (see the gitignore suggestion below).
-
 ---
 
 ## Prerequisites
@@ -105,7 +101,7 @@ Projet_Robotique_DE/
 - MATLAB + Simulink
 - **Simscape Multibody** (project data file indicates Multibody 7.x)
 - Optional but useful:
-  - Symbolic Math Toolbox (if you want to re-run symbolic derivations inside `Script22.mlx`)
+  - Symbolic Math Toolbox (if you want to re-run symbolic derivations inside `Script.mlx`)
   - Optimization toolbox is **not required** (DE is implemented manually in `Optimisation_DE.m`)
 
 ---
@@ -169,13 +165,14 @@ M = matric_homogene(X);
 ```
 
 Internally it matches the classic DH transform:
+
 $$
-{}^{i-1}\!T_i =
+{}^{i-1}T_i =
 \begin{bmatrix}
-\cos\theta & -\sin\theta \cos\alpha & \sin\theta \sin\alpha & a\cos\theta \\
-\sin\theta & \cos\theta \cos\alpha & -\cos\theta \sin\alpha & a\sin\theta \\
-0 & \sin\alpha & \cos\alpha & d \\
-0 & 0 & 0 & 1
+\cos\theta & -\sin\theta\cos\alpha & \sin\theta\sin\alpha & a\cos\theta \\
+\sin\theta & \cos\theta\cos\alpha  & -\cos\theta\sin\alpha & a\sin\theta \\
+0          & \sin\alpha            & \cos\alpha            & d \\
+0          & 0                     & 0                     & 1
 \end{bmatrix}
 $$
 
@@ -194,10 +191,11 @@ theta1_sol_geo = atan2(Py, Px);
 
 ### Trajectory generation (5th-order polynomial)
 
-The live script also uses a smooth 5th‑order time scaling:
+The live script also uses a smooth 5th-order time scaling:
+
 $$
-s(t) = 10\left(\frac{t}{T}\right)^3 - 15\left(\frac{t}{T}\right)^4 + 6\left(\frac{t}{T}\right)^5,
-\quad s(0)=0,\; s(T)=1
+s(t)=10\left(\frac{t}{T}\right)^3-15\left(\frac{t}{T}\right)^4+6\left(\frac{t}{T}\right)^5,
+\qquad s(0)=0,\; s(T)=1
 $$
 
 This lets you interpolate between an initial and final joint target smoothly:
@@ -230,8 +228,9 @@ For comparing PID tunings (and for DE optimization), common metrics include:
 - penalties for joint limit violation / saturation
 
 A popular choice for smooth tuning is **ITAE**:
+
 $$
-J = \int_0^T t\;|e(t)|\;dt
+J=\sum_{i=1}^{3}\int_{0}^{T} t\,\lvert e_i(t)\rvert\,dt
 $$
 
 ---
@@ -297,46 +296,6 @@ A 2D dimension sketch is included:
 
 ---
 
-## Troubleshooting
-
-### “Simscape Multibody not installed / blocks missing”
-Install **Simscape Multibody** and restart MATLAB.
-
-### “Model won’t run / missing variables”
-- Run the data file first:
-  ```matlab
-  run('x3DoFRobot_DataFile2.m');
-  ```
-- Check that PID gains (`Kp1`, `Ki1`, `Kd1`, …) exist in the base workspace if your model expects them.
-
-### DE script runs but returns NaN / errors
-- Ensure your model exports `Performance` as a valid scalar.
-- Add `try/catch` inside `evaluate_pid` and return a large penalty if simulation fails.
-
-### GitHub repo is huge / slow
-- Consider **Git LFS** for large binaries (`.pdf`, `.pptx`, `.step`, `.sldprt`, `.sldasm`)
-- Don’t commit simulation caches:
-  - `slprj/`
-  - `*.slxc`
-
-**Suggested `.gitignore` (MATLAB/Simulink)**
-```
-# Simulink / Simscape caches
-slprj/
-*.slxc
-*.autosave
-*.original
-
-# MATLAB autosave / backups
-*.asv
-
-# OS noise
-.DS_Store
-Thumbs.db
-```
-
----
-
 ## Roadmap / ideas
 
 If you want to push this project further:
@@ -354,17 +313,6 @@ If you want to push this project further:
 
 - **Simscape Multibody robot model source:** This project reused/adapted the Simscape Multibody robot model originally published in the repository `SabirHusnain/3DOF-Robot-Control`. Full credit to the author for the Multibody model foundation.
   - Reference: https://github.com/SabirHusnain/3DOF-Robot-Control
-
-
-## License
-
-Choose one:
-- **MIT** (simple and permissive), or
-- **GPL‑3.0** (forces derivatives to stay open source)
-
-Add a `LICENSE` file at repo root to make it official.
-
----
 
 ## Acknowledgments
 
